@@ -15,11 +15,13 @@ Annotation overview
 
 | Annotations                                                                                                                              | Description                                                                                                                                                                                |
 | ---------------------------------------------------------------------------------------------------------------------------------------- |:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:| 
-| [@View](https://github.com/flxplzk/spring-vaadin-mvvm/blob/master/src/main/java/de/flxplzk/spring/vaadin/mvvm/binding/View.java)                         | Applied to a view class that shall be bound to a view model.                                                                                                                               |
-| [@ItemBound](https://github.com/flxplzk/spring-vaadin-mvvm/blob/master/src/main/java/de/flxplzk/spring/vaadin/mvvm/binding/ItemBound.java)               | Applied to any UI element that implements the `HasValue` interface (e.g. `Form`). Binds the element to a corresponding `HasValue<V>` declared in the view model.                               |
-| [@OnClick](https://github.com/flxplzk/spring-vaadin-mvvm/blob/master/src/main/java/de/flxplzk/spring/vaadin/mvvm/binding/OnClick.java)     | Applied to any UI element that extends the `Button` class. Binds the click event to the no arg method declared in the view model.                    |
-| [@OnComponentEvent](https://github.com/flxplzk/spring-vaadin-mvvm/blob/master/src/main/java/de/flxplzk/spring/vaadin/mvvm/binding/OnComponentEvent.java)           |Applied to any UI element that extends `Component`. Binds all Component.Event events to a method in the corresponding view model.                                                                          |
-| [@ListingBound](https://github.com/flxplzk/spring-vaadin-mvvm/blob/master/src/main/java/de/flxplzk/spring/vaadin/mvvm/binding/ListingBound.java)             | Applied to any UI element that implements HasItems<V>. Binds a specified field to a corresponding field that implements 'HasValue<List<V>> in the corresponding view model.                                                            |
+| [@View](https://github.com/flxplzk/vmi/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/View.java)                         | Applied to a view class that shall be bound to a view model.                                                                                                                               |
+| [@ItemBound](https://github.com/flxplzk/vmi/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/ItemBound.java)               | Applied to any UI element that implements the `HasValue` interface (e.g. `Form`). Binds the element to a corresponding `HasValue<V>` declared in the view model.                               |
+| [@OnClick](https://github.com/flxplzk/vmi/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/OnClick.java)     | Applied to any UI element that extends the `Button` class. Binds the click event to the no arg method declared in the view model.                    |
+| [@OnComponentEvent](https://github.com/flxplzk/vmi/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/OnComponentEvent.java)           |Applied to any UI element that extends `Component`. Binds all Component.Event events to a method in the corresponding view model.                                                                          |
+| [@ListingBound](https://github.com/flxplzk/vmi/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/ListingBound.java)             | Applied to any UI element that implements HasItems<V>. Binds a specified field to a corresponding field that implements 'HasValue<List<V>> in the corresponding view model.                                                            |
+ | [@SelectionBound](https://github.com/flxplzk/vmi/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/SelectionBound.java)             | Applied to any Grid Component. Binds all the selected item when an item gets selected                                                            |
+  | [@EnableBound](https://github.com/flxplzk/vmi/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/EnableBound.java)             | Applied to any Grid Component. Binds all the selected item when an item gets selected                                                            |
 
 
 ``` java
@@ -39,9 +41,11 @@ public class MainView extends CustomComponent{
     private final TextField mGreetingTextField = new TextField();
 
     @OnClick(method = "save")
+    @EnableBound(to = "safeEnabled")
     private final Button mJoinCommunity = new Button("join");
 
     @ListingBound(to = "greetings")
+    @SelectionBound(to = "selectedGreeting")
     private final Grid<Entry> mCommunityGrid = new Grid<>();
 
     @ItemBound(to = "selectedEntry")
@@ -77,13 +81,16 @@ public class MainViewModel {
     private final Property<String> name = new Property<>("");
     private final Property<String> greeting = new Property<>("");
     private final Property<Entry> selectedEntry = new Property<>(new Entry());
-
-    private final Property<List<Entry>> greetings;
+    private final Property<String> selectedGreeting = new Property(""); 
+    private final Property<Boolean> safeEnabled = new Property(Boolean.FALSE); 
+    private final Property<List<Entry>> greetings = new Property(new ArrayList());
 
     public MainViewModel(EntryService service) {
         this.service = service;
-        this.greetings = new Property<>(this.service.findAll());
-        this.service.register(this);
+        // For usage of AsyncTask view [AsyncTask|(https://github.com/flxplzk/vmi/blob/master/src/main/java/de/flxplzk/vaadin/async/AsyncTask.java)]
+        new AsyncTask<>(params -> this.service.findAll())
+               .withPostExecutionHandler(result -> this.greetings.setValue(result)
+               .execute();
     }
 
     public void update(){
