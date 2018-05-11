@@ -62,6 +62,7 @@ public class AsyncTask<P, R> {
 
     private void onPostExecute(R result) {
         this.isExecuting = false;
+        if (this.postExecuteHandler == null) return;
         this.postExecuteHandler.onPostExecute(result);
     }
 
