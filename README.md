@@ -1,4 +1,4 @@
-# vmi - VIEW MODEL IT
+# VADDON - Vaadin Addon
 VMI is a lightweightannotation based mvvm framework for vaadin in combination with spring boot. it comes with bunch of helpers for using mvvm.
 
 I wrote that code because I wanted to use a light weight mvvm-framework like bambi for my spring boot application. 
