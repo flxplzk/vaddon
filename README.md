@@ -1,5 +1,5 @@
 # VADDON - Vaadin Addon
-VMI is a lightweightannotation based mvvm framework for vaadin in combination with spring boot. it comes with bunch of helpers for using mvvm.
+VMI is a lightweight annotation based mvvm framework for vaadin and spring boot. it comes with bunch of helpers for using mvvm. 
 
 I wrote that code because I wanted to use a light weight mvvm-framework like bambi for my spring boot application. 
 
@@ -8,25 +8,31 @@ This code enables you a two way data binding of your view to the corresponding v
 
 The overall structure borrows heavily from existing MVC/MVVM framework [bambi](https://raw.githubusercontent.com/michaeljfazio/bambi-mvvm/)
  
+# binding
 With using the ViewModelComposer.bind(...) method each field which is marked with a mvvm-binding annotation of your view is 
-bind to the viewModel-Bean which name is defined in the @View(model="beanName") annotation. 
+bind to the viewModel-Bean which name is defined in the @View(model="beanName") annotation. The ViewModelComposer will retrieve the view model pojo from the application context (note: the view model bean must be available for this proccess with the bean name provided in the @View annotation. 
 
+``` java 
+@View(model = "mainViewModel")
+public class BoundView extends CustomComponent{
+...
+}
+
+```
 Annotation overview
 
 | Annotations                                                                                                                              | Description                                                                                                                                                                                |
 | ---------------------------------------------------------------------------------------------------------------------------------------- |:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:| 
-| [@View](https://github.com/flxplzk/vmi/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/View.java)                         | Applied to a view class that shall be bound to a view model.                                                                                                                               |
-| [@ItemBound](https://github.com/flxplzk/vmi/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/ItemBound.java)               | Applied to any UI element that implements the `HasValue` interface (e.g. `Form`). Binds the element to a corresponding `HasValue<V>` declared in the view model.                               |
-| [@OnClick](https://github.com/flxplzk/vmi/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/OnClick.java)     | Applied to any UI element that extends the `Button` class. Binds the click event to the no arg method declared in the view model.                    |
-| [@OnComponentEvent](https://github.com/flxplzk/vmi/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/OnComponentEvent.java)           |Applied to any UI element that extends `Component`. Binds all Component.Event events to a method in the corresponding view model.                                                                          |
-| [@ListingBound](https://github.com/flxplzk/vmi/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/ListingBound.java)             | Applied to any UI element that implements HasItems<V>. Binds a specified field to a corresponding field that implements 'HasValue<List<V>> in the corresponding view model.                                                            |
- | [@SelectionBound](https://github.com/flxplzk/vmi/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/SelectionBound.java)             | Applied to any Grid Component. Binds all the selected item when an item gets selected                                                            |
+| [@View](https://github.com/flxplzk/vaddon/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/View.java)                         | Applied to a view class that shall be bound to a view model.                                                                                                                               |
+| [@ItemBound](https://github.com/flxplzk/vaddon/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/ItemBound.java)               | Applied to any UI element that implements the `HasValue` interface (e.g. `Form`). Binds the element to a corresponding `HasValue<V>` declared in the view model.                               |
+| [@OnClick](https://github.com/flxplzk/vaddon/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/OnClick.java)     | Applied to any UI element that extends the `Button` class. Binds the click event to the no arg method declared in the view model.                    |
+| [@OnComponentEvent](https://github.com/flxplzk/vaddon/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/OnComponentEvent.java)           |Applied to any UI element that extends `Component`. Binds all Component.Event events to a method in the corresponding view model.                                                                          |
+| [@ListingBound](https://github.com/flxplzk/vaddon/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/ListingBound.java)             | Applied to any UI element that implements HasItems<V>. Binds a specified field to a corresponding field that implements 'HasValue<List<V>> in the corresponding view model.                                                            |
+ | [@SelectionBound](https://github.com/flxplzk/vaddon/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/SelectionBound.java)             | Applied to any Grid Component. Binds all the selected item when an item gets selected                                                            |
   | [@EnableBound](https://github.com/flxplzk/vmi/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/EnableBound.java)             | Applied to any Grid Component. Binds all the selected item when an item gets selected                                                            |
 
-
-``` java
 # View
-
+``` java
 @View(model = "mainViewModel")
 public class MainView extends CustomComponent{
  
@@ -73,8 +79,9 @@ public class MainView extends CustomComponent{
     }
     
 }
-
-#ViewModel
+```
+# ViewModel
+``` java
 public class MainViewModel {
     private final EntryService service;
 
@@ -105,3 +112,17 @@ public class MainViewModel {
         this.service.delete(this.selectedEntry.getValue());
     }
 }
+```
+
+# AsyncTask
+
+The async task is designed to fire of task which might need some processing time. When you has developed andorid before you will might be familiar with this pattern. anyway The AsyncTask is desiignt to use it fluently on demand passing Pre. post- and OnErrorHandlers as funtional interfaces
+
+``` Java
+
+new AsyncTask<>(params -> this.service.findAll())
+               .withPreExecutionHAndler(this::foo)
+               .withPostExecutionHandler(result -> this.greetings.setValue(result)
+               .withErrorHAndler(cause -> showError(cause)
+               .execute();
+
