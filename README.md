@@ -29,7 +29,21 @@ Annotation overview
 | [@OnComponentEvent](https://github.com/flxplzk/vaddon/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/OnComponentEvent.java)           |Applied to any UI element that extends `Component`. Binds all Component.Event events to a method in the corresponding view model.                                                                          |
 | [@ListingBound](https://github.com/flxplzk/vaddon/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/ListingBound.java)             | Applied to any UI element that implements HasItems<V>. Binds a specified field to a corresponding field that implements 'HasValue<List<V>> in the corresponding view model.                                                            |
  | [@SelectionBound](https://github.com/flxplzk/vaddon/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/SelectionBound.java)             | Applied to any Grid Component. Binds all the selected item when an item gets selected                                                            |
-  | [@EnableBound](https://github.com/flxplzk/vmi/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/EnableBound.java)             | Applied to any Grid Component. Binds all the selected item when an item gets selected                                                            |
+  | [@EnableBound](https://github.com/flxplzk/vmi/blob/master/src/main/java/de/flxplzk/vaadin/mvvm/EnableBound.java)             | Applied to any Component. binds the enabled state of the field to the difened property of type Boolean                                                            |
+
+# AsyncTask
+
+The async task is designed to fire of task which might need some processing time. When you has developed android before you will might be familiar with this pattern. anyway The AsyncTask is desiignt to use it fluently on demand passing Pre-, post- and OnErrorHandlers as funtional interfaces
+
+``` Java
+
+new AsyncTask<>(params -> this.service.findAll())
+               .withPreExecutionHAndler(this::foo)
+               .withPostExecutionHandler(result -> this.greetings.setValue(result)
+               .withErrorHAndler(cause -> showError(cause)
+               .execute();
+
+```
 
 # View
 ``` java
@@ -113,16 +127,3 @@ public class MainViewModel {
     }
 }
 ```
-
-# AsyncTask
-
-The async task is designed to fire of task which might need some processing time. When you has developed andorid before you will might be familiar with this pattern. anyway The AsyncTask is desiignt to use it fluently on demand passing Pre. post- and OnErrorHandlers as funtional interfaces
-
-``` Java
-
-new AsyncTask<>(params -> this.service.findAll())
-               .withPreExecutionHAndler(this::foo)
-               .withPostExecutionHandler(result -> this.greetings.setValue(result)
-               .withErrorHAndler(cause -> showError(cause)
-               .execute();
-
