@@ -1,7 +1,7 @@
 # VADDON - Vaadin Addon
-VMI is a lightweight annotation based mvvm framework for vaadin and spring boot. it comes with bunch of helpers for using mvvm. 
+vaddon is a lightweight annotation based mvvm addon for vaadin and spring boot. it comes with bunch of helpers for using mvvm. 
 
-I wrote that code because I wanted to use a light weight mvvm-framework like bambi for my spring boot application. 
+I wrote that code because I wanted to use a light weight mvvm-framework like bambi for my vaadin, spring-boot application. 
 
 Unfortunatly bambi is no longer supported by vaadin 8 as the container/property api does not exist anymore. 
 This code enables you a two way data binding of your view to the corresponding viewModel. 
